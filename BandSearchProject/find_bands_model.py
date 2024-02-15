@@ -30,5 +30,27 @@ device = (
 print(f"Using {device} device")
 
 model = NeuralNetwork(1000, 512, 512, 100).to(device)
-print(model)
-    
+
+x_train = np.load('x_train.npy')
+y_train = np.load('y_train.npy')
+
+optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+loss_fn = torch.nn.MSELoss()
+
+losses = []
+
+for t in range(0, 1000):
+    optimizer.zero_grad()
+    y_pred = model.forward(x_train)
+    loss = loss_fn(y_pred, y_train)
+    losses.append(loss)
+    loss.backward()
+    optimizer.step()
+
+print('Inital loss:', losses[0])
+print('Final loss:', losses[-1])
+
+plt.plot(np.range(1000), losses)
+plt.x_label('Time')
+plt.y_label('Loss')
+plt.show()
